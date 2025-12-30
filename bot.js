@@ -1,5 +1,4 @@
-import supbase from "./supabase";
-
+const supab
 const TelegramBot = require("node-telegram-bot-api");
 const axios = require("axios");
 require("dotenv").config();
