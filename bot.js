@@ -119,7 +119,9 @@ bot.on("message", async (msg) => {
       .single();
 
     if (!existing) {
-      await supbase.insert([
+      await supbase
+        .from("users")
+        .insert([
         {
           chat_id: chatId,
           username: msg.from.username || null,
@@ -128,7 +130,7 @@ bot.on("message", async (msg) => {
         },
       ]);
     }
-    console.log(`Recorded new user: ${chatId}`)
+    console.log(`Recorded new user: ${chatId}`);
   } catch (error) {
     console.error("Error handling message:", error);
   }
@@ -154,4 +156,8 @@ bot.on("message", async (msg) => {
     const memeUrl = await getMeme();
     if (memeUrl) bot.sendPhoto(chatId, memeUrl);
   }
+});
+
+bot.on('polling_error', (error) => {
+  console.error('Polling error:', error.code, error.message);
 });
