@@ -20,8 +20,7 @@ async function getMeme() {
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   const name = msg.from.first_name || "there";
-  const startText =
-    `Hello ${name}! Welcome to the Meme Bot.
+  const startText = `Hello ${name}! Welcome to the Meme Bot.
 
 This bot can send you memes on demand or when you send messages containing the words "meme", "lol", "funny", or "joke".
 
@@ -32,11 +31,10 @@ Quick Commands:
 /menu - Open a quick command keyboard
 
 Author: naiih001
-Twitter: https://twitter.com/naiih001
-Telegram: https://t.me/naiih001
+Twitter: https://x.com/isaac_hayab
+Telegram: https://t.me/naiih069
 
-Tip: send a short message containing "meme" or "lol" (without starting with ` /
-    `) to receive an automatic meme.`;
+Tip: send a short message containing "meme" or "lol" (without starting with \`/\`) to receive an automatic meme.`;
 
   bot.sendMessage(chatId, startText);
 });
@@ -109,6 +107,7 @@ bot.onText(/\/menu/, (msg) => {
 // });
 
 bot.on("message", async (msg) => {
+  // Store chatId once
   const chatId = msg.chat.id;
 
   try {
@@ -119,9 +118,7 @@ bot.on("message", async (msg) => {
       .single();
 
     if (!existing) {
-      await supbase
-        .from("users")
-        .insert([
+      await supbase.from("users").insert([
         {
           chat_id: chatId,
           username: msg.from.username || null,
@@ -158,6 +155,10 @@ bot.on("message", async (msg) => {
   }
 });
 
-bot.on('polling_error', (error) => {
-  console.error('Polling error:', error.code, error.message);
+bot.on("polling_error", (error) => {
+  console.error("Polling error:", error.code, error.message);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled promise rejection:', err);
 });
