@@ -28,8 +28,8 @@ Commands:
 /help - Show available commands and usage
 
 Author: naiih001
-Twitter: https://twitter.com/naiih001
-Telegram: https://t.me/naiih001
+Twitter: https://x.com/isaac_hayab
+Telegram: https://t.me/naiih069
 
 Type /help for more details or just send "meme" to get one now. Enjoy!`;
 
