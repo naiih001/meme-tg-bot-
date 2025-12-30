@@ -22,6 +22,12 @@ bot.onText(/\/start/, (msg) => {
   );
 });
 
+bot.onText(/\/help/, (msg) => {
+  const chatId = msg.chat.id;
+  const helpText = `Available commands:\n\n/start - Show welcome message\n/meme - Fetch a random meme\n/help - Show this help message\n\nYou can also send messages containing "meme" or "lol" to receive a meme automatically.`;
+  bot.sendMessage(chatId, helpText);
+});
+
 bot.onText(/\/meme/, async (msg) => {
   const chatId = msg.chat.id;
   const memeUrl = await getMeme();
