@@ -10,6 +10,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.89.0",
     "axios": "^1.13.2",
     "dotenv": "^17.2.3",
     "node-telegram-bot-api": "^0.67.0"

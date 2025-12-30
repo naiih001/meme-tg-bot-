@@ -1,3 +1,5 @@
+import supbase from "./supabase";
+
 const TelegramBot = require("node-telegram-bot-api");
 const axios = require("axios");
 require("dotenv").config();
@@ -17,28 +19,31 @@ async function getMeme() {
 
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
-  const name = msg.from.first_name || 'there';
-  const startText = `Hello ${name}! Welcome to the Meme Bot.
+  const name = msg.from.first_name || "there";
+  const startText =
+    `Hello ${name}! Welcome to the Meme Bot.
 
-This bot can send you memes on demand or when you send messages containing the words "meme" or "lol".
+This bot can send you memes on demand or when you send messages containing the words "meme", "lol", "funny", or "joke".
 
-Commands:
+Quick Commands:
 /start - Show this welcome message
-/meme - Fetch a random meme
+/meme - Fetch a random meme now
 /help - Show available commands and usage
+/menu - Open a quick command keyboard
 
 Author: naiih001
-Twitter: https://x.com/isaac_hayab
-Telegram: https://t.me/naiih069
+Twitter: https://twitter.com/naiih001
+Telegram: https://t.me/naiih001
 
-Type /help for more details or just send "meme" to get one now. Enjoy!`;
+Tip: send a short message containing "meme" or "lol" (without starting with ` /
+    `) to receive an automatic meme.`;
 
   bot.sendMessage(chatId, startText);
 });
 
 bot.onText(/\/help/, (msg) => {
   const chatId = msg.chat.id;
-  const helpText = `Available commands:\n\n/start - Show welcome message\n/meme - Fetch a random meme\n/help - Show this help message\n\nYou can also send messages containing "meme" or "lol" to receive a meme automatically.`;
+  const helpText = `Meme Bot — Help\n\nCommands:\n/start - Show welcome message and usage tips\n/meme - Fetch a random meme immediately\n/menu - Open helpful command keyboard\n/help - Show this message\n\nAutomatic triggers:\n- Send a message containing the words: meme, lol, funny, or joke (do NOT start the message with a leading '/').\n\nAuthor: naiih001\nTwitter: https://twitter.com/naiih001\nTelegram: https://t.me/naiih001\n\nIf you want a different behavior (e.g., more/less triggers), tell me and I can update it.`;
   bot.sendMessage(chatId, helpText);
 });
 
@@ -58,13 +63,13 @@ bot.onText(/\/menu/, (msg) => {
   const options = {
     reply_markup: {
       keyboard: [
-        ['/meme', '/localmeme'], // row 1
-        ['/funny', '/joke'],      // row 2
-        ['/help']                  // row 3
+        ["/meme", "/localmeme"], // row 1
+        ["/funny", "/joke"], // row 2
+        ["/help"], // row 3
       ],
       resize_keyboard: true, // makes it smaller, nicer
-      one_time_keyboard: true // disappears after use
-    }
+      one_time_keyboard: true, // disappears after use
+    },
   };
 
   bot.sendMessage(chatId, "Here are the commands you can use:", options);
@@ -106,15 +111,46 @@ bot.onText(/\/menu/, (msg) => {
 bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
 
+  try {
+    const { data: existing } = await supbase
+      .from("users")
+      .select("chat_id")
+      .eq("chat_id", chatId)
+      .single();
+
+    if (!existing) {
+      await supbase.insert([
+        {
+          chat_id: chatId,
+          username: msg.from.username || null,
+          first_name: msg.from.first_name || null,
+          last_name: msg.from.last_name || null,
+        },
+      ]);
+    }
+    console.log(`Recorded new user: ${chatId}`)
+  } catch (error) {
+    console.error("Error handling message:", error);
+  }
+
   const text = msg.text?.toLowerCase();
 
   if (!text) return;
 
   // Ignore bot commands (like "/meme") to avoid double-sending when
   // a command handler (bot.onText(/\/meme/)) already responds.
-  if (msg.entities?.some((e) => e.type === "bot_command") || text.startsWith('/')) return;
+  if (
+    msg.entities?.some((e) => e.type === "bot_command") ||
+    text.startsWith("/")
+  )
+    return;
 
-  if (text.includes("meme") || text.includes("lol") || text.includes("funny") || text.includes("joke")) {
+  if (
+    text.includes("meme") ||
+    text.includes("lol") ||
+    text.includes("funny") ||
+    text.includes("joke")
+  ) {
     const memeUrl = await getMeme();
     if (memeUrl) bot.sendPhoto(chatId, memeUrl);
   }
