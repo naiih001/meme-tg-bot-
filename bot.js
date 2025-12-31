@@ -14,6 +14,26 @@ bot.setWebHook(`${webhookUrl}`);
 const app = express();
 app.use(express.json());
 
+const serverStart = Date.now();
+
+app.get("/health", async (req, res) => {
+  const start = Date.now();
+  let ping = null;
+  try {
+    await axios.get("https://api.telegram.org", { timeout: 2000 });
+    ping = Date.now() - start;
+  } catch (error) {
+    ping = null;
+  }
+
+  res.json({
+    status: "ok",
+    uptime: process.uptime(),
+    since: new Date(serverStart).toISOString(),
+    ping_ms: ping,
+  });
+});
+
 app.post("/webhook", (req, res) => {
   bot.processUpdate(req.body);
   res.sendStatus(200);
