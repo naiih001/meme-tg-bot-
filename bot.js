@@ -1,9 +1,10 @@
 import supbase from "./supabase.js";
 
-const TelegramBot = require("node-telegram-bot-api");
-const axios = require("axios");
-const express = require("express");
-require("dotenv").config();
+import TelegramBot from "node-telegram-bot-api";
+import axios from "axios";
+import express from "express";
+import dotenv from "dotenv";
+dotenv.config();
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const webhookUrl = process.env.WEBHOOK_URL;

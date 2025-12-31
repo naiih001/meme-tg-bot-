@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "start": "bun run index.ts"
+    "start": "node bot.js"
   },
   "devDependencies": {
     "@types/bun": "latest"
