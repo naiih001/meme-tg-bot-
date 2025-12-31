@@ -1,10 +1,24 @@
-const supab
+import supbase from "./supabase.js";
+
 const TelegramBot = require("node-telegram-bot-api");
 const axios = require("axios");
+const express = require("express");
 require("dotenv").config();
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
+const webhookUrl = process.env.WEBHOOK_URL;
 const bot = new TelegramBot(token, { polling: true });
+bot.setWebHook(`${webhookUrl}`);
+
+const app = express();
+app.use(express.json());
+
+app.post("/webhook", (req, res) => {
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
+});
+
+
 
 async function getMeme() {
   try {
@@ -160,4 +174,9 @@ bot.on("polling_error", (error) => {
 
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled promise rejection:', err);
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Express server is running on port ${PORT}`);
 });
