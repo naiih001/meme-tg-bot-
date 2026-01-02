@@ -8,7 +8,7 @@ dotenv.config();
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const webhookUrl = process.env.WEBHOOK_URL;
-const bot = new TelegramBot(token, { polling: true });
+const bot = new TelegramBot(token);
 bot.setWebHook(`${webhookUrl}`);
 
 const app = express();
@@ -38,8 +38,6 @@ app.post("/webhook", (req, res) => {
   bot.processUpdate(req.body);
   res.sendStatus(200);
 });
-
-
 
 async function getMeme() {
   try {
@@ -193,8 +191,8 @@ bot.on("polling_error", (error) => {
   console.error("Polling error:", error.code, error.message);
 });
 
-process.on('unhandledRejection', (err) => {
-  console.error('Unhandled promise rejection:', err);
+process.on("unhandledRejection", (err) => {
+  console.error("Unhandled promise rejection:", err);
 });
 
 const PORT = process.env.PORT || 3000;
