@@ -4,6 +4,7 @@ import TelegramBot from "node-telegram-bot-api";
 import axios from "axios";
 import express from "express";
 import dotenv from "dotenv";
+import cron from "node-cron"; 
 dotenv.config();
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -184,6 +185,47 @@ bot.on("message", async (msg) => {
   ) {
     const memeUrl = await getMeme();
     if (memeUrl) bot.sendPhoto(chatId, memeUrl);
+  }
+});
+
+// Send schedule messages every minute
+cron.schedule("0 9 * * *", async () => {
+  const messages = [
+    "👋 Hello! Don't forget to check out the latest memes. Just send 'meme' to get a new one!",
+    "Hey there! Ready for a laugh? Type 'meme' to see a fresh meme!",
+    "Hi! Your daily dose of fun is here. Send 'meme' for a new meme!"
+  ];
+
+  try {
+    // Fetch all unique chat_id from supabase
+    const { data: users, error } = await supbase.from("users").select("chat_id");
+
+    if (error) {
+      console.error("Error fetching users:", error);
+      return;
+    }
+
+    // Ensure users is not null and is an array
+    if (!users || !Array.isArray(users)) {
+        console.error("Invalid data received from supabase:", users);
+        return;
+    }
+
+    // Create a Set of unique chat_ids to avoid duplicate messages
+    const uniqueChatIds = new Set(users.map(user => user.chat_id));
+
+    // Send a message to each unique chat_id
+    for (const chatId of uniqueChatIds) {
+      try {
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        await bot.sendMessage(chatId, randomMessage);
+        console.log(`Sent scheduled message to ${chatId}`);
+      } catch (err) {
+        console.error(`Failed to send message to ${chatId}:`, err);
+      }
+    }
+  } catch (err) {
+    console.error("Error in cron job:", err);
   }
 });
 

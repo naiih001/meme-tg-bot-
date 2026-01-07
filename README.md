@@ -16,6 +16,7 @@ For more information on how to get these values, refer to the official documenta
 
 - **Meme on Demand**: Use the `/meme` command to get a random meme.
 - **Automatic Meme Delivery**: The bot sends a meme if your message contains "meme", "lol", "funny", or "joke".
+- **Scheduled Meme Reminders**: Periodically reminds users to get new memes with varied messages.
 - **User Management**: Integrates with Supabase to record user `chat_id` and `username`.
 - **Help and Menu Commands**: `/start` for welcome message, `/help` for commands, and `/menu` for a quick command keyboard.
 
